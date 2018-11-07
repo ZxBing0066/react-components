@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import RcMonthCalendar from 'rc-calendar/lib/MonthCalendar';
 
-import { calCalendarProps } from 'components/Calendar/Calendar';
+import MonthCalendar from 'components/Calendar/Month';
 import placements from 'components/Popover/placements';
 import uncontrolledDecorator from 'decorators/uncontrolled';
 import { animationPrefixCls } from 'src/style/globalAnimation';
@@ -39,12 +38,15 @@ class Month extends Component {
         /** 控件尺寸 */
         size: PropTypes.oneOf(Size),
         /** 是否禁用 */
-        disabled: PropTypes.bool
+        disabled: PropTypes.bool,
+        /** 弹出层的z-index */
+        zIndex: PropTypes.number
     };
     static defaultProps = {
         defaultValue: moment(),
         onChange: () => {},
-        size: 'md'
+        size: 'md',
+        zIndex: 100
     };
     componentWillReceiveProps = nextProps => {
         if ('value' in nextProps) {
@@ -88,7 +90,7 @@ class Month extends Component {
     };
     render() {
         // eslint-disable-next-line no-unused-vars
-        const { rules, value: _v, defaultValue, size, display = {}, onChange, ...rest } = this.props;
+        const { rules, value: _v, defaultValue, size, display = {}, onChange, zIndex, ...rest } = this.props;
         const { date = {} } = display;
         const value = moment(_v);
 
@@ -97,11 +99,12 @@ class Month extends Component {
                 <PickerWrap
                     prefixCls={prefixCls}
                     transitionName={`${animationPrefixCls}-fade`}
-                    calendar={<RcMonthCalendar {...calCalendarProps({ rules })} />}
+                    calendar={<MonthCalendar rules={rules} />}
                     getCalendarContainer={triggerNode => triggerNode.parentNode}
                     value={value}
                     align={placements.bottomLeft}
                     onChange={onChange}
+                    zIndex={zIndex}
                 >
                     {({ value }) => {
                         return (

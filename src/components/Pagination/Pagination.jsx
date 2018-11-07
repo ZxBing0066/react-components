@@ -4,10 +4,10 @@ import classnames from 'classnames';
 
 import Icon from 'components/Icon';
 import NumberInput from 'components/NumberInput';
+import localeConsumerDecorator from 'components/LocaleProvider/localeConsumerDecorator';
 
 import Pager from './Pager';
 import Options from './Options';
-import KEYCODE from 'interfaces/KeyCode';
 import LOCALE from './locale/zh_CN';
 import { PaginationWrap, prefixCls } from './style';
 
@@ -29,6 +29,7 @@ function defaultItemRender(page, type, element) {
 }
 const Size = ['sm', 'md', 'lg'];
 
+@localeConsumerDecorator({ defaultLocale: LOCALE, localeName: 'Pagination' })
 class Pagination extends Component {
     static propTypes = {
         /** 当前页，受控 */
@@ -70,7 +71,9 @@ class Pagination extends Component {
         /** @ignore */
         itemRender: PropTypes.func,
         /** 尺寸 */
-        size: PropTypes.oneOf(Size)
+        size: PropTypes.oneOf(Size),
+        /** @ignore */
+        optionsProps: PropTypes.object
     };
 
     static defaultProps = {
@@ -85,7 +88,6 @@ class Pagination extends Component {
         showLessItems: false,
         showTitle: true,
         onPageSizeChange: noop,
-        locale: LOCALE,
         itemRender: defaultItemRender,
         size: 'md'
     };
@@ -176,40 +178,6 @@ class Pagination extends Component {
 
     isValid = page => {
         return isInteger(page) && page >= 1 && page !== this.state.current;
-    };
-
-    handleKeyDown = e => {
-        if (e.keyCode === KEYCODE.ARROW_UP || e.keyCode === KEYCODE.ARROW_DOWN) {
-            e.preventDefault();
-        }
-    };
-
-    handleKeyUp = e => {
-        const inputValue = e.target.value;
-        const currentInputValue = this.state.currentInputValue;
-        let value;
-
-        if (inputValue === '') {
-            value = inputValue;
-        } else if (isNaN(Number(inputValue))) {
-            value = currentInputValue;
-        } else {
-            value = Number(inputValue);
-        }
-
-        if (value !== currentInputValue) {
-            this.setState({
-                currentInputValue: value
-            });
-        }
-
-        if (e.keyCode === KEYCODE.ENTER) {
-            this.handleChange(value);
-        } else if (e.keyCode === KEYCODE.ARROW_UP) {
-            this.handleChange(value - 1);
-        } else if (e.keyCode === KEYCODE.ARROW_DOWN) {
-            this.handleChange(value + 1);
-        }
     };
 
     changePageSize = size => {
@@ -313,12 +281,6 @@ class Pagination extends Component {
         this.runIfEnter(e, this.jumpNext);
     };
 
-    handleGoTO = e => {
-        if (e.keyCode === KEYCODE.ENTER || e.type === 'click') {
-            this.handleChange(this.state.currentInputValue);
-        }
-    };
-
     render() {
         /* eslint-disable no-unused-vars */
         const {
@@ -342,6 +304,7 @@ class Pagination extends Component {
             className,
             itemRender,
             size,
+            optionsProps,
             ...rest
         } = this.props;
         /* eslint-enable no-unused-vars */
@@ -402,8 +365,8 @@ class Pagination extends Component {
                 );
             }
         } else {
-            const prevItemTitle = showLessItems ? locale.prev_3 : locale.prev_5;
-            const nextItemTitle = showLessItems ? locale.next_3 : locale.next_5;
+            const prevItemTitle = showLessItems ? locale.prev3 : locale.prev5;
+            const nextItemTitle = showLessItems ? locale.next3 : locale.next5;
             if (showPrevNextJumpers) {
                 jumpPrev = (
                     <li
@@ -518,7 +481,7 @@ class Pagination extends Component {
                 {...rest}
             >
                 <li
-                    title={showTitle ? locale.prev_page : null}
+                    title={showTitle ? locale.prevPage : null}
                     onClick={this.prev}
                     tabIndex={prevDisabled ? null : 0}
                     onKeyPress={this.runIfEnterPrev}
@@ -529,7 +492,7 @@ class Pagination extends Component {
                 </li>
                 {pagerList}
                 <li
-                    title={showTitle ? locale.next_page : null}
+                    title={showTitle ? locale.nextPage : null}
                     onClick={this.next}
                     tabIndex={nextDisabled ? null : 0}
                     onKeyPress={this.runIfEnterNext}
@@ -549,6 +512,7 @@ class Pagination extends Component {
                     goButton={goButton}
                     size={size}
                     allPages={allPages}
+                    {...optionsProps}
                 />
             </PaginationWrap>
         );

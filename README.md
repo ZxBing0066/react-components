@@ -1,7 +1,9 @@
 ## React Components
 
 [![npm version](https://badge.fury.io/js/%40ucloud-fe%2Freact-components.svg)](https://badge.fury.io/js/%40ucloud-fe%2Freact-components)
-[![Build Status](https://travis-ci.org/UCloud-FE/react-components.svg?branch=master)](https://travis-ci.org/UCloud-FE/react-components)
+[![TravisCI](https://travis-ci.org/UCloud-FE/react-components.svg?branch=master)](https://travis-ci.org/UCloud-FE/react-components)
+[![CircleCI](https://circleci.com/gh/UCloud-FE/react-components.svg?style=svg)](https://circleci.com/gh/UCloud-FE/react-components)
+[![codecov](https://codecov.io/gh/UCloud-FE/react-components/branch/master/graph/badge.svg)](https://codecov.io/gh/UCloud-FE/react-components)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
@@ -11,15 +13,15 @@
 
 ### 如何使用
 
-*   从内部 npm 源直接安装
+*   使用 npm 或 yarn 进行安装
 
 ```bash
 <!-- install use yarn -->
-yarn add @ucloud-fe/react-components --registry=http://registry.npm.pre.ucloudadmin.com
+yarn add @ucloud-fe/react-components
 <!-- install use npm -->
-npm install @ucloud-fe/react-components --registry=http://registry.npm.pre.ucloudadmin.com
-<!-- install with url -->
-npm install http://registry.npm.pre.ucloudadmin.com/@ucloud-fe/react-components/download/@ucloud-fe/react-components-${version}
+npm install @ucloud-fe/react-components
+<!-- install with a fixed version -->
+yarn add @ucloud-fe/react-components@0.3.1
 ```
 
 *   导入组件并按需导入字体样式并使用

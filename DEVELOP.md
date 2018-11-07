@@ -8,7 +8,7 @@
     *   创建对应的组件文件，主组件文件名与文件夹名相同
     *   创建对应的 md 文件，用作文档编写
     *   创建`__demo__`文件夹用于存放 demo 代码
-    *   创建`__test__`文件夹用于存放测试用例
+    *   创建`__tests__`文件夹用于存放测试用例
     *   创建`style`文件夹用于存放样式相关代码
     *   在 .styleguide/components.json 中添加导出文档的配置
     *   重启文档系统来看到新组件
@@ -66,3 +66,8 @@
     1.  对于完整演示 demo，命名为`组件名.jsx`
     2.  对于单个 props、功能的样式 demo，命名为`组件名-(props名称|功能名称).jsx`，主组件的组件名可不写
 *   demo 中需抛出`Demo`组件，用于文档中展示，import 和 export 等代码写在头尾，主体内容用`// demo start`和`// demo end`包裹
+
+#### 如何发布
+
+*   发布使用`standard-version`，可直接快速执行`npm run publish:version`来快速生成`changelog`，并修改版本号
+*   review `changelog`无误后 `git push --follow-tags` 到 github，等待执行测试编译无问题，，等待`ci`自动发布

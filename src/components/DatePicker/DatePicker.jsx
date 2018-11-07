@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import RcCalendar from 'rc-calendar';
 
 import NumberInput from 'components/NumberInput';
-import { calCalendarProps } from 'components/Calendar/Calendar';
+import Calendar from 'components/Calendar/Calendar';
 import placements from 'components/Popover/placements';
 import uncontrolledDecorator from 'decorators/uncontrolled';
 import { animationPrefixCls } from 'src/style/globalAnimation';
@@ -54,12 +53,15 @@ class DatePicker extends Component {
             second: PropTypes.bool
         }),
         /** 是否禁用 */
-        disabled: PropTypes.bool
+        disabled: PropTypes.bool,
+        /** 弹出层的z-index */
+        zIndex: PropTypes.number
     };
     static defaultProps = {
         defaultValue: moment(),
         onChange: () => {},
-        size: 'md'
+        size: 'md',
+        zIndex: 100
     };
     componentWillReceiveProps = nextProps => {
         if ('value' in nextProps) {
@@ -154,7 +156,7 @@ class DatePicker extends Component {
     };
     render() {
         // eslint-disable-next-line no-unused-vars
-        const { rules, value: _v, defaultValue, display = {}, size, onChange, ...rest } = this.props;
+        const { rules, value: _v, defaultValue, display = {}, size, onChange, zIndex, ...rest } = this.props;
         const { date = {} } = display;
         const value = moment(_v);
 
@@ -164,11 +166,12 @@ class DatePicker extends Component {
                     <PickerWrap
                         prefixCls={prefixCls}
                         transitionName={`${animationPrefixCls}-fade`}
-                        calendar={<RcCalendar {...calCalendarProps({ rules })} />}
+                        calendar={<Calendar rules={rules} />}
                         getCalendarContainer={triggerNode => triggerNode.parentNode}
                         value={value}
                         align={placements.bottomLeft}
                         onChange={onChange}
+                        zIndex={zIndex}
                     >
                         {({ value }) => {
                             return (

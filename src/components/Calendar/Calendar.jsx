@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import { isDateDisabled, getValidDate } from './utils';
+import localeConsumerDecorator from 'src/components/LocaleProvider/localeConsumerDecorator';
 
+import { isDateDisabled, getValidDate } from './utils';
 import { CalendarWrap, prefixCls } from './style';
+import LOCALE from './locale/zh_CN';
 
 import 'moment/locale/zh-cn';
-import locale from 'rc-calendar/lib/locale/zh_CN';
 moment()
     .locale('zh-cn')
     .utcOffset(8);
 
+@localeConsumerDecorator({ defaultLocale: LOCALE, localeName: 'Calendar', publicFn: ['focus'] })
 class Calendar extends Component {
     static propTypes = {
         /** 选中的时间，受控，Moment 类型 */
@@ -42,11 +44,21 @@ class Calendar extends Component {
             onSelect(value);
         }
     };
+    focus = () => {
+        this.calendar && this.calendar.focus();
+    };
     render() {
         /* eslint-disable-next-line no-unused-vars */
         const { rules = {}, onSelect, ...rest } = this.props;
 
-        return <CalendarWrap onSelect={this.onSelect} {...calCalendarProps({ rules })} {...rest} />;
+        return (
+            <CalendarWrap
+                innerRef={ref => (this.calendar = ref)}
+                onSelect={this.onSelect}
+                {...calCalendarProps({ rules })}
+                {...rest}
+            />
+        );
     }
 }
 
@@ -55,7 +67,6 @@ const calCalendarProps = ({ rules }) => {
         prefixCls: prefixCls,
         showDateInput: false,
         showToday: false,
-        locale: locale,
         disabledDate: (date, currentValue) => {
             return isDateDisabled(date, currentValue, rules);
         }
@@ -64,4 +75,4 @@ const calCalendarProps = ({ rules }) => {
 
 export default Calendar;
 
-export { locale, calCalendarProps };
+export { calCalendarProps };

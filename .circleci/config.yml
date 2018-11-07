@@ -1,0 +1,129 @@
+# Javascript Node CircleCI 2.0 configuration file
+version: 2
+
+references:
+  container_config: &container_config
+    docker:
+      - image: circleci/node:8
+    working_directory: ~/react-components
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: ~/react-components
+
+jobs:
+  setup:
+    <<: *container_config
+    steps:
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - yarn-packages-v1.0-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-v1.0-{{ .Branch }}-
+            - yarn-packages-v1.0-
+      - run: yarn install
+      - save_cache:
+          paths:
+            - ~/.cache/yarn
+            - node_modules
+          key: yarn-packages-v1.0-{{ .Branch }}-{{ checksum "yarn.lock" }}
+      - persist_to_workspace:
+          root: ~/react-components
+          paths:
+            - node_modules
+  
+  end:
+    <<: *container_config
+    steps:
+      - run: echo end
+
+  eslint:
+    <<: *container_config
+    steps:
+      - checkout
+      - *attach_workspace
+      - run: npm run lint:es
+  stylelint:
+    <<: *container_config
+    steps:
+      - checkout
+      - *attach_workspace
+      - run: npm run lint:style
+  test:
+    <<: *container_config
+    steps:
+      - checkout
+      - *attach_workspace
+      - run: npm run test -- -w=2 --collectCoverage
+      - persist_to_workspace:
+          root: ~/react-components
+          paths:
+            - coverage
+
+  codecov:
+    <<: *container_config
+    steps:
+      - checkout
+      - *attach_workspace
+      - run: sudo npm install -g codecov
+      - run: codecov
+
+  build dist:
+    <<: *container_config
+    steps:
+      - checkout
+      - *attach_workspace
+      - run: npm run build:dist
+  build lib:
+    <<: *container_config
+    steps:
+      - checkout
+      - *attach_workspace
+      - run: npm run build:lib
+  build gh-pages:
+    <<: *container_config
+    steps:
+      - checkout
+      - *attach_workspace
+      - run: npm run build:gh-pages
+
+workflows:
+  version: 2
+  test-and-build:
+    jobs:
+      - setup:
+          filters:
+            branches:
+              ignore: gh-pages
+      - eslint:
+          requires:
+            - setup
+      - stylelint:
+          requires:
+            - setup
+      - test:
+          requires:
+            - eslint
+            - stylelint
+      - codecov:
+          requires:
+            - test
+      - build dist:
+          requires:
+            - eslint
+            - stylelint
+      - build lib:
+          requires:
+            - eslint
+            - stylelint
+      - build gh-pages:
+          requires:
+            - eslint
+            - stylelint
+      - end:
+          requires:
+            - codecov
+            - build dist
+            - build lib
+            - build gh-pages
